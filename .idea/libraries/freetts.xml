@@ -1,0 +1,20 @@
+<component name="libraryTable">
+  <library name="freetts">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/freetts.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jakarta.activation-1.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/javax.mail.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jsapi.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/jsoup-1.15.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/mbrola.jar!/" />
+      <root url="file://$PROJECT_DIR$/libs" />
+      <root url="jar://$PROJECT_DIR$/libs/cmu_time_awb.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/cmu_us_kal.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/en_us.jar!/" />
+      <root url="jar://$PROJECT_DIR$/libs/freetts-jsapi10.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/libs" recursive="false" />
+  </library>
+</component>
