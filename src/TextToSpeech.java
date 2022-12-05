@@ -8,7 +8,7 @@ import javax.speech.synthesis.Synthesizer;
 import java.util.Locale;
 
 
-public class TextToSpeech {
+public class TextToSpeech{
 
     public static void main(String[] args)
     {
@@ -36,4 +36,13 @@ public class TextToSpeech {
 
 
     }
+    public static void speakPhrase(String phrase){
+        System.setProperty("freetts.voices", "com.sun.speech.freetts.en.us.cmu_us_kal.KevinVoiceDirectory");
+        Voice voice = VoiceManager.getInstance().getVoice("kevin16");
+        voice.allocate();
+        voice.speak(phrase);
+        voice.deallocate();
+    }
+
+
 }

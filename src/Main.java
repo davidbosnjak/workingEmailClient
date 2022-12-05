@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
         JFrame loginFrame = new JFrame();
         JPanel loginPanel = new JPanel();
         try {
@@ -63,8 +62,8 @@ class UserInterface{
 
         pageLabel.setBounds(920,110,200,30);
         mainProgramPanel.add(pageLabel);
-        mainProgramPanel.add(prePageButton);
-        mainProgramPanel.add(nextPageButton);
+        emailPanel.add(prePageButton);
+        emailPanel.add(nextPageButton);
         mainProgramPanel.add(emailPanel);
         mainProgramPanel.add(sideBarPanel);
         nextPageButton.addActionListener(new ActionListener() {
@@ -139,13 +138,13 @@ class UserInterface{
         System.out.println(email.subject);
         System.out.println(email.sender);
         JLabel subjectLabel = new JLabel(email.subject);
-        subjectLabel.setFont(new Font("Serif", Font.BOLD, 15));
+        subjectLabel.setFont(new Font("serif", Font.BOLD, 14));
         JButton deleteButton = new JButton(resizeImage("assets/delete.png",30,30));
         deleteButton.setBounds(1000,10,30,30);
         deleteButton.setContentAreaFilled(false);
         oneEmailPanel.add(deleteButton);
         JLabel senderLabel = new JLabel(email.sender);
-        senderLabel.setFont(new Font("Serif", Font.BOLD, 15));
+        senderLabel.setFont(new Font("serif", Font.BOLD, 14));
         JLabel contentLabel = new JLabel(email.body);
         oneEmailPanel.addMouseListener(new MouseListener() {
             @Override
@@ -283,13 +282,29 @@ class UserInterface{
         oneEmailDisplay.setBounds(0,0,1000,800);
         JLabel senderLabel = new JLabel(email.sender);
         JLabel subjectLabel = new JLabel(email.subject);
+        String emailContent = parseString(email.body);
         JLabel contentLabel = new JLabel(parseString(email.body));
-        senderLabel.setBounds(0,0,300,30);
+        senderLabel.setBounds(20,0,300,30);
         senderLabel.setFont(new Font("serif", Font.BOLD, 18));
 
-        subjectLabel.setBounds(0,50,800,30);
+        subjectLabel.setBounds(20,50,800,30);
         subjectLabel.setFont(new Font("serif", Font.BOLD, 16));
-        contentLabel.setBounds(0,80,800,400);
+        contentLabel.setBounds(20,80,800,400);
+        JButton ttsButton  = new JButton("Speak email");
+        ttsButton.setBounds(400,400,60,200);
+        ttsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextToSpeech.speakPhrase(emailContent);
+
+                    }
+                }).start();
+            }
+        });
+        oneEmailDisplay.add(ttsButton);
         oneEmailDisplay.add(senderLabel);
         oneEmailDisplay.add(subjectLabel);
         oneEmailDisplay.add(contentLabel);
