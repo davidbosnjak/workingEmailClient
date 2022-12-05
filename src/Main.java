@@ -1,10 +1,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +28,7 @@ class UserInterface{
     static final int PROGRAM_WIDTH = 1280;
     static int pageNumber = 1;
     static String currentFolder = "INBOX";
+    static String defaultPhrase = "Press the arrow keys to navigate the interface";
 
 
     public static void mainProgram(){
@@ -60,6 +58,10 @@ class UserInterface{
         displayEmails(list, emailPanel);
         mainProgramPanel.add(displaySideBar(sideBarPanel, emailPanel, mainProgramPanel,pageLabel));
 
+
+        CursorPanel cursorPanel = new CursorPanel(15);
+        cursorPanel.setBackground(Color.BLACK);
+        mainProgramPanel.add(cursorPanel);
         pageLabel.setBounds(920,110,200,30);
         mainProgramPanel.add(pageLabel);
         emailPanel.add(prePageButton);
@@ -118,6 +120,12 @@ class UserInterface{
     private static void displayEmails(ArrayList<Email> emailList, JPanel emailPanel){
         int i =1;
         emailPanel.removeAll();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                TextToSpeech.speakPhrase("Press the arrow keys to move cursor");
+            }
+        }).start();
         for(Email email : emailList){
 
             emailPanel.add(displayOneEmail(email,i, emailPanel));
@@ -128,6 +136,7 @@ class UserInterface{
 
 
     }
+
     private static JPanel displayOneEmail(Email email, int pos, JPanel emailsPanel){
         JPanel oneEmailPanel = new JPanel(null);
 
@@ -362,4 +371,71 @@ class Email{
 
 
 
+}
+class CursorPanel extends CoolComponents.RoundedPanel implements KeyListener{
+    int currX;
+    int currY;
+    //to make clicking stuff work with this, just set the cursor position
+    CursorPanel(int roundAmount){
+        super(roundAmount);
+        setBounds(100,100,50,50);
+        currX = 100;
+        currY = 100;
+        setLayout(null);
+        setFocusable(true);
+        //requestFocus();
+
+
+    }
+    private void movePanel(int xMove, int yMove){
+        currX+=xMove;
+        currY+=yMove;
+        System.out.println("should be moving");
+        setBounds(currX,currY,50,50);
+        repaint();
+
+    }
+
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {
+        System.out.println("pressed");
+        int keyCode = keyEvent.getKeyCode();
+        switch(keyCode){
+            case KeyEvent.VK_UP:
+                movePanel(0,-10);
+                break;
+            case KeyEvent.VK_DOWN:
+                movePanel(0,10);
+                break;
+            case KeyEvent.VK_LEFT:
+                movePanel(-10,0);
+                break;
+            case KeyEvent.VK_RIGHT:
+                movePanel(10,0);
+                break;
+            case 'w':
+                movePanel(0,-10);
+                break;
+            case 's':
+                movePanel(0,10);
+                break;
+            case 'a':
+                movePanel(-10,0);
+                break;
+            case 'd':
+                movePanel(10,0);
+                break;
+
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent keyEvent) {
+
+    }
 }
