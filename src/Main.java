@@ -61,11 +61,54 @@ class UserInterface{
 
         CursorPanel cursorPanel = new CursorPanel(15);
         cursorPanel.setBackground(Color.BLACK);
+        mainProgramFrame.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                System.out.println("pressed");
+                int keyCode = e.getKeyCode();
+                switch(keyCode){
+                    case KeyEvent.VK_UP:
+                        cursorPanel.movePanel(0,-10);
+                        break;
+                    case KeyEvent.VK_DOWN:
+                        cursorPanel.movePanel(0,10);
+                        break;
+                    case KeyEvent.VK_LEFT:
+                        cursorPanel.movePanel(-10,0);
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        cursorPanel.movePanel(10,0);
+                        break;
+                    case 'w':
+                        cursorPanel.movePanel(0,-10);
+                        break;
+                    case 's':
+                        cursorPanel.movePanel(0,10);
+                        break;
+                    case 'a':
+                        cursorPanel.movePanel(-10,0);
+                        break;
+                    case 'd':
+                       cursorPanel.movePanel(10,0);
+                        break;
+
+                }}
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+        });
         mainProgramPanel.add(cursorPanel);
         pageLabel.setBounds(920,110,200,30);
         mainProgramPanel.add(pageLabel);
-        emailPanel.add(prePageButton);
-        emailPanel.add(nextPageButton);
+        mainProgramPanel.add(prePageButton);
+        mainProgramPanel.add(nextPageButton);
         mainProgramPanel.add(emailPanel);
         mainProgramPanel.add(sideBarPanel);
         nextPageButton.addActionListener(new ActionListener() {
@@ -387,7 +430,7 @@ class CursorPanel extends CoolComponents.RoundedPanel implements KeyListener{
 
 
     }
-    private void movePanel(int xMove, int yMove){
+    public void movePanel(int xMove, int yMove){
         currX+=xMove;
         currY+=yMove;
         System.out.println("should be moving");
