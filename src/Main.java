@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
+
 public class Main {
     public static void main(String[] args) {
         JFrame loginFrame = new JFrame();
@@ -29,9 +32,15 @@ class UserInterface{
     static int pageNumber = 1;
     static String currentFolder = "INBOX";
     static String defaultPhrase = "Press the arrow keys to navigate the interface";
+    static JButton nextPageButton = new JButton("Next page");
+    static JButton prePageButton = new JButton("Prev page");
+
+    static CacheInformation cache;
+
 
 
     public static void mainProgram(){
+
         JFrame mainProgramFrame = new JFrame();
 
         mainProgramFrame.setSize(PROGRAM_WIDTH,PROGRAM_HEIGHT);
@@ -50,18 +59,20 @@ class UserInterface{
         //check(host, mailStoreType, username, password);
         ArrayList<Email> list = CheckingMails.check(host, username, password,currentFolder,1,10);
         int emailLength = CheckingMails.getEmailFolderLength(currentFolder, username, password);
-        JButton nextPageButton = new JButton("Next page");
         nextPageButton.setBounds(700,620,200,30);
-        JButton prePageButton = new JButton("Prev page");
         prePageButton.setBounds(480,620,200,30);
+        String pageLabelString = "Page 1 of "+(emailLength/10+1);
+        cache = new CacheInformation(list, pageLabelString);
         JLabel pageLabel  = new JLabel("Page 1 of "+emailLength/10);
         displayEmails(list, emailPanel);
         mainProgramPanel.add(displaySideBar(sideBarPanel, emailPanel, mainProgramPanel,pageLabel));
 
-
+        JButton backButton = new JButton("Back");
+        backButton.setBounds(250,100,200,40);
+        mainProgramPanel.add(backButton);
         CursorPanel cursorPanel = new CursorPanel(15);
         cursorPanel.setBackground(Color.BLACK);
-        mainProgramFrame.addKeyListener(new KeyListener() {
+        mainProgramPanel.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
 
@@ -151,6 +162,16 @@ class UserInterface{
                     pageLabel.setText("Page "+pageNumber+" of "+emailLength/10);
 
                 }}
+
+        });
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                displayEmails(cache.list, emailPanel);
+                pageLabel.setText(cache.pageInformation);
+                emailPanel.repaint();
+                mainProgramPanel.repaint();
+            }
         });
 
         mainProgramFrame.setVisible(true);
@@ -161,6 +182,8 @@ class UserInterface{
 
     }
     private static void displayEmails(ArrayList<Email> emailList, JPanel emailPanel){
+        prePageButton.setVisible(true);
+        nextPageButton.setVisible(true);
         int i =1;
         emailPanel.removeAll();
         new Thread(new Runnable() {
@@ -267,8 +290,9 @@ class UserInterface{
         inboxButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                currentFolder = "INBOX";
-                changeFolder(sideBarPanel,emailPanel,mainPanel,emailLabel);
+                displayEmails(cache.list, emailPanel);
+                emailPanel.repaint();
+                mainPanel.repaint();
 
             }
         });
@@ -329,6 +353,8 @@ class UserInterface{
         mainPanel.repaint();
     }
     public static void displayFullEmail(Email email, JPanel emailPanel){
+        prePageButton.setVisible(false);
+        nextPageButton.setVisible(false);
         emailPanel.removeAll();
         JPanel oneEmailDisplay = new JPanel(null);
         oneEmailDisplay.setBounds(0,0,1000,800);
@@ -336,6 +362,8 @@ class UserInterface{
         JLabel subjectLabel = new JLabel(email.subject);
         String emailContent = parseString(email.body);
         JLabel contentLabel = new JLabel(parseString(email.body));
+        contentLabel.setForeground(Color.BLACK);
+        contentLabel.setFont(new Font("serif", Font.PLAIN, 16));
         senderLabel.setBounds(20,0,300,30);
         senderLabel.setFont(new Font("serif", Font.BOLD, 18));
 
@@ -343,7 +371,7 @@ class UserInterface{
         subjectLabel.setFont(new Font("serif", Font.BOLD, 16));
         contentLabel.setBounds(20,80,800,400);
         JButton ttsButton  = new JButton("Speak email");
-        ttsButton.setBounds(400,400,60,200);
+        ttsButton.setBounds(400,400,200,60);
         ttsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -415,7 +443,7 @@ class Email{
 
 
 }
-class CursorPanel extends CoolComponents.RoundedPanel implements KeyListener{
+class CursorPanel extends CoolComponents.RoundedPanel {
     int currX;
     int currY;
     //to make clicking stuff work with this, just set the cursor position
@@ -425,7 +453,7 @@ class CursorPanel extends CoolComponents.RoundedPanel implements KeyListener{
         currX = 100;
         currY = 100;
         setLayout(null);
-        setFocusable(true);
+
         //requestFocus();
 
 
@@ -439,13 +467,13 @@ class CursorPanel extends CoolComponents.RoundedPanel implements KeyListener{
 
     }
 
-    @Override
+
     public void keyTyped(KeyEvent keyEvent) {
 
     }
 
-    @Override
-    public void keyPressed(KeyEvent keyEvent) {
+
+   public void nativeKeyPressed(NativeKeyEvent keyEvent){
         System.out.println("pressed");
         int keyCode = keyEvent.getKeyCode();
         switch(keyCode){
@@ -477,8 +505,17 @@ class CursorPanel extends CoolComponents.RoundedPanel implements KeyListener{
         }
     }
 
-    @Override
-    public void keyReleased(KeyEvent keyEvent) {
 
+
+
+}
+class CacheInformation{
+
+    public ArrayList<Email> list= new ArrayList<>();
+    String pageInformation;
+    CacheInformation(ArrayList<Email> list, String pageInformation){
+        this.list = list;
+        this.pageInformation = pageInformation;
     }
+
 }
