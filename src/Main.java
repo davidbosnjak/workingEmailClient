@@ -26,7 +26,8 @@ public class Main {
 
 
 class UserInterface{
-
+    //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
+    //openAI api key
     static final int PROGRAM_HEIGHT = 720;
     static final int PROGRAM_WIDTH = 1280;
     static int pageNumber = 1;
@@ -34,41 +35,53 @@ class UserInterface{
     static String defaultPhrase = "Press the arrow keys to navigate the interface";
     static JButton nextPageButton = new JButton("Next page");
     static JButton prePageButton = new JButton("Prev page");
+    static JLabel pageLabel  = new JLabel();
+    public static String gUsername;
+    public static String gPassword;
 
     static CacheInformation cache;
 
 
 
-    public static void mainProgram(){
+    public static void mainProgram(String username, String password){
 
         JFrame mainProgramFrame = new JFrame();
-
+        mainProgramFrame.setTitle("Accessimail Pro");
         mainProgramFrame.setSize(PROGRAM_WIDTH,PROGRAM_HEIGHT);
         mainProgramFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel mainProgramPanel = new JPanel(null);
         JPanel emailPanel = new JPanel(null);
-        emailPanel.setBounds(200,150,1080,520);
+        emailPanel.setBounds(200,150,1580,720);
         mainProgramFrame.add(mainProgramPanel);
         mainProgramFrame.setSize(PROGRAM_WIDTH,PROGRAM_HEIGHT);
         mainProgramPanel.setBounds(0,0,PROGRAM_WIDTH,PROGRAM_HEIGHT);
+        mainProgramPanel.setBounds(0,0,PROGRAM_WIDTH,PROGRAM_HEIGHT);
         String host = "imaps";// change accordingly
         String mailStoreType = "pop3";
-        String username = "r33nter@gmail.com";// change accordingly
-        String password = "prrctqjnmkcejobz";// change accordingly
+        //username = "r33nter@gmail.com";// change accordingly
+        //password = "prrctqjnmkcejobz";// change accordingly
+        gPassword = password;
+        gUsername = username;
         JPanel sideBarPanel = new JPanel(null);
         //check(host, mailStoreType, username, password);
         ArrayList<Email> list = CheckingMails.check(host, username, password,currentFolder,1,10);
         int emailLength = CheckingMails.getEmailFolderLength(currentFolder, username, password);
+        nextPageButton.setOpaque(true);
+        nextPageButton.setBackground(Color.decode("#95a5a6"));
+        prePageButton.setOpaque(true);
+        prePageButton.setBackground(Color.decode("#95a5a6"));
         nextPageButton.setBounds(700,620,200,30);
         prePageButton.setBounds(480,620,200,30);
         String pageLabelString = "Page 1 of "+(emailLength/10+1);
         cache = new CacheInformation(list, pageLabelString);
-        JLabel pageLabel  = new JLabel("Page 1 of "+emailLength/10);
+        pageLabel  = new JLabel("Page 1 of "+emailLength/10);
         displayEmails(list, emailPanel);
         mainProgramPanel.add(displaySideBar(sideBarPanel, emailPanel, mainProgramPanel,pageLabel));
 
         JButton backButton = new JButton("Back");
         backButton.setBounds(250,100,200,40);
+        backButton.setOpaque(true);
+        backButton.setBackground(Color.decode("#95a5a6"));
         mainProgramPanel.add(backButton);
         CursorPanel cursorPanel = new CursorPanel(15);
         cursorPanel.setBackground(Color.BLACK);
@@ -115,13 +128,15 @@ class UserInterface{
 
             }
         });
-        mainProgramPanel.add(cursorPanel);
+        //mainProgramPanel.add(cursorPanel);
         pageLabel.setBounds(920,110,200,30);
         mainProgramPanel.add(pageLabel);
         mainProgramPanel.add(prePageButton);
         mainProgramPanel.add(nextPageButton);
         mainProgramPanel.add(emailPanel);
         mainProgramPanel.add(sideBarPanel);
+        String tempPass = password;
+
         nextPageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -129,8 +144,7 @@ class UserInterface{
 
                 pageNumber++;
                 emailPanel.removeAll();
-
-                ArrayList<Email> list = CheckingMails.check(host,username,password,currentFolder,10*(pageNumber-1)+1, pageNumber*10);
+                ArrayList<Email> list = CheckingMails.check(host,username,tempPass,currentFolder,10*(pageNumber-1)+1, pageNumber*10);
                 displayEmails(list, emailPanel);
 
 
@@ -215,7 +229,7 @@ class UserInterface{
         JLabel subjectLabel = new JLabel(email.subject);
         subjectLabel.setFont(new Font("serif", Font.BOLD, 14));
         JButton deleteButton = new JButton(resizeImage("assets/delete.png",30,30));
-        deleteButton.setBounds(1000,10,30,30);
+        //deleteButton.setBounds(1000,10,30,30);
         deleteButton.setContentAreaFilled(false);
         oneEmailPanel.add(deleteButton);
         JLabel senderLabel = new JLabel(email.sender);
@@ -264,7 +278,7 @@ class UserInterface{
     }
     private static JPanel displaySideBar(JPanel sideBarPanel, JPanel emailPanel, JPanel mainPanel, JLabel emailLabel){
         sideBarPanel.setBounds(0,0,200,PROGRAM_HEIGHT);
-        sideBarPanel.setBackground(Color.BLUE);
+        sideBarPanel.setBackground(Color.decode("#34495e"));
         JButton newEmailButton = new JButton("New Email");
         newEmailButton.setIcon(resizeImage("assets/edit.png",30,30));
         newEmailButton.setBounds(20,40,150,60);
@@ -279,10 +293,21 @@ class UserInterface{
         spamButton.setBounds(20,260,150,30);
         sentButton.setBounds(20,420,150,30);
 
+        inboxButton.setOpaque(true);
+        inboxButton.setBackground(Color.decode("#95a5a6"));
+        spamButton.setOpaque(true);
+        spamButton.setBackground(Color.decode("#95a5a6"));
+        newEmailButton.setOpaque(true);
+        newEmailButton.setBackground(Color.decode("#95a5a6"));
+        draftsButton.setOpaque(true);
+        draftsButton.setBackground(Color.decode("#95a5a6"));
+        sentButton.setOpaque(true);
+        sentButton.setBackground(Color.decode("#95a5a6"));
         spamButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 currentFolder = "[Gmail]/Spam";
+
                 changeFolder(sideBarPanel,emailPanel,mainPanel,emailLabel);
 
             }
@@ -290,9 +315,8 @@ class UserInterface{
         inboxButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                displayEmails(cache.list, emailPanel);
-                emailPanel.repaint();
-                mainPanel.repaint();
+                currentFolder = "INBOX";
+                changeFolder(sideBarPanel, emailPanel,mainPanel,emailLabel);
 
             }
         });
@@ -302,6 +326,12 @@ class UserInterface{
                 currentFolder = "[Gmail]/Drafts";
                 changeFolder(sideBarPanel,emailPanel,mainPanel,emailLabel);
 
+            }
+        });
+        newEmailButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                composeNewEmail(emailPanel, "", "");
             }
         });
         sentButton.addActionListener(new ActionListener() {
@@ -348,16 +378,17 @@ class UserInterface{
         emailLabel.setText("Page "+pageNumber+" of "+(emailLength/10+1));
 
 
-
+        pageLabel.setVisible(true);
         emailPanel.repaint();
         mainPanel.repaint();
     }
     public static void displayFullEmail(Email email, JPanel emailPanel){
+        pageLabel.setVisible(false);
         prePageButton.setVisible(false);
         nextPageButton.setVisible(false);
         emailPanel.removeAll();
         JPanel oneEmailDisplay = new JPanel(null);
-        oneEmailDisplay.setBounds(0,0,1000,800);
+        oneEmailDisplay.setBounds(0,0,1280,800);
         JLabel senderLabel = new JLabel(email.sender);
         JLabel subjectLabel = new JLabel(email.subject);
         String emailContent = parseString(email.body);
@@ -371,6 +402,11 @@ class UserInterface{
         subjectLabel.setFont(new Font("serif", Font.BOLD, 16));
         contentLabel.setBounds(20,80,800,400);
         JButton ttsButton  = new JButton("Speak email");
+        JButton replyButton = new JButton("Reply");
+        JButton smartReplyButton = new JButton("Smart reply");
+
+        smartReplyButton.setBounds(850,300,200,40);
+        replyButton.setBounds(850,400,200,40);
         ttsButton.setBounds(400,400,200,60);
         ttsButton.addActionListener(new ActionListener() {
             @Override
@@ -384,6 +420,20 @@ class UserInterface{
                 }).start();
             }
         });
+        smartReplyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                composeNewEmail(emailPanel, email.sender, OpenAI.executeOpenAIRequest("Respond to the following email: "+email.body));
+            }
+        });
+        replyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                composeNewEmail(emailPanel, email.sender, "");
+            }
+        });
+        oneEmailDisplay.add(smartReplyButton);
+        oneEmailDisplay.add(replyButton);
         oneEmailDisplay.add(ttsButton);
         oneEmailDisplay.add(senderLabel);
         oneEmailDisplay.add(subjectLabel);
@@ -417,6 +467,74 @@ class UserInterface{
         stringToBuild.append("</html>");
         System.out.println(stringToBuild);
         return stringToBuild.toString();
+    }
+    public static void composeNewEmail(JPanel emailPanel, String user, String content){
+        prePageButton.setVisible(false);
+        nextPageButton.setVisible(false);
+        pageLabel.setVisible(false);
+        emailPanel.removeAll();
+        JPanel composeEmailPanel = new JPanel(null);
+        composeEmailPanel.setBounds(0,0,1580,720);
+        JTextField sentToField = new JTextField();
+        JTextField subjectField = new JTextField();
+        JTextField openAIField = new JTextField();
+        JTextArea contentField = new JTextArea();
+        sentToField.setText(user);
+        contentField.setText(content);
+        JLabel subjectLabel = new JLabel("Subject");
+        JLabel senderLabel = new JLabel("Recipient");
+        JLabel openAILabel = new JLabel("OpenAI arguments");
+        JButton submitArgs = new JButton("Submit arguments");
+        JButton sendEmail = new JButton("Send Email");
+        JButton fixGrammar = new JButton("Fix grammar");
+        contentField.setLineWrap(true);
+        subjectLabel.setBounds(20,0,150,30);
+        senderLabel.setBounds(20,40,150,30);
+        openAILabel.setBounds(20,80,150,30);
+        submitArgs.setBounds(900,80, 150,30);
+        sentToField.setBounds(200,40,700,40);
+        subjectField.setBounds(200,0,700,40);
+        openAIField.setBounds(200,80,700,40);
+        contentField.setBounds(200,150,700,500);
+        sendEmail.setBounds(900,500,150,30);
+        fixGrammar.setBounds(900,300,150,30);
+
+        //action listeners
+        submitArgs.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                contentField.setText(OpenAI.executeOpenAIRequest(openAIField.getText()));
+            }
+        });
+        sendEmail.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                CheckingMails.sendMail(sentToField.getText(), subjectField.getText(), contentField.getText(), gUsername, gPassword);
+            }
+        });
+        fixGrammar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                contentField.setText(OpenAI.executeOpenAIRequest("Fix the spelling and grammar in the following text: "+contentField.getText()));
+            }
+        });
+
+        composeEmailPanel.add(fixGrammar);
+        composeEmailPanel.add(submitArgs);
+        composeEmailPanel.add(subjectLabel);
+        composeEmailPanel.add(senderLabel);
+        composeEmailPanel.add(openAILabel);
+        composeEmailPanel.add(sendEmail);
+        composeEmailPanel.add(sentToField);
+        composeEmailPanel.add(subjectField);
+        composeEmailPanel.add(openAIField);
+        composeEmailPanel.add(contentField);
+        emailPanel.add(composeEmailPanel);
+        emailPanel.repaint();
+
+
+
+
     }
 }
 
