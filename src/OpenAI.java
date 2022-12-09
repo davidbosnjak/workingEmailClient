@@ -1,5 +1,4 @@
 
-import org.python.util.PythonInterpreter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +14,7 @@ public class OpenAI {
     public static String executeOpenAIRequest(String request) {
         StringBuilder totalOutput = new StringBuilder();
 
-       ProcessBuilder processBuilder = new ProcessBuilder("python", System.getProperty("user.dir")+"/src/openAI.py",request);
+       ProcessBuilder processBuilder = new ProcessBuilder("python3", System.getProperty("user.dir")+"/src/openAI.py",request);
         try {
             Process process = processBuilder.start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));

@@ -58,29 +58,31 @@ class UserInterface{
         mainProgramPanel.setBounds(0,0,PROGRAM_WIDTH,PROGRAM_HEIGHT);
         String host = "imaps";// change accordingly
         String mailStoreType = "pop3";
-        //username = "r33nter@gmail.com";// change accordingly
-        //password = "prrctqjnmkcejobz";// change accordingly
+
         gPassword = password;
         gUsername = username;
         JPanel sideBarPanel = new JPanel(null);
-        //check(host, mailStoreType, username, password);
         ArrayList<Email> list = CheckingMails.check(host, username, password,currentFolder,1,10);
         int emailLength = CheckingMails.getEmailFolderLength(currentFolder, username, password);
         nextPageButton.setOpaque(true);
         nextPageButton.setBackground(Color.decode("#95a5a6"));
+        nextPageButton.setBorderPainted(false);
         prePageButton.setOpaque(true);
+        prePageButton.setBorderPainted(false);
         prePageButton.setBackground(Color.decode("#95a5a6"));
         nextPageButton.setBounds(700,620,200,30);
         prePageButton.setBounds(480,620,200,30);
         String pageLabelString = "Page 1 of "+(emailLength/10+1);
         cache = new CacheInformation(list, pageLabelString);
-        pageLabel  = new JLabel("Page 1 of "+emailLength/10);
+        pageLabel  = new JLabel(pageLabelString);
         displayEmails(list, emailPanel);
         mainProgramPanel.add(displaySideBar(sideBarPanel, emailPanel, mainProgramPanel,pageLabel));
 
         JButton backButton = new JButton("Back");
         backButton.setBounds(250,100,200,40);
         backButton.setOpaque(true);
+        backButton.setFocusPainted(false);
+        backButton.setBorderPainted(false);
         backButton.setBackground(Color.decode("#95a5a6"));
         mainProgramPanel.add(backButton);
         CursorPanel cursorPanel = new CursorPanel(15);
@@ -200,12 +202,7 @@ class UserInterface{
         nextPageButton.setVisible(true);
         int i =1;
         emailPanel.removeAll();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                TextToSpeech.speakPhrase("Press the arrow keys to move cursor");
-            }
-        }).start();
+
         for(Email email : emailList){
 
             emailPanel.add(displayOneEmail(email,i, emailPanel));
@@ -295,14 +292,23 @@ class UserInterface{
 
         inboxButton.setOpaque(true);
         inboxButton.setBackground(Color.decode("#95a5a6"));
+        inboxButton.setBorderPainted(false);
         spamButton.setOpaque(true);
         spamButton.setBackground(Color.decode("#95a5a6"));
+        spamButton.setBorderPainted(false);
+
         newEmailButton.setOpaque(true);
         newEmailButton.setBackground(Color.decode("#95a5a6"));
+        newEmailButton.setBorderPainted(false);
+
         draftsButton.setOpaque(true);
         draftsButton.setBackground(Color.decode("#95a5a6"));
+        draftsButton.setBorderPainted(false);
+
         sentButton.setOpaque(true);
         sentButton.setBackground(Color.decode("#95a5a6"));
+        sentButton.setBorderPainted(false);
+
         spamButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -372,9 +378,9 @@ class UserInterface{
     }
 
     public static void changeFolder(JPanel sideBarPanel, JPanel emailPanel, JPanel mainPanel, JLabel emailLabel){
-        ArrayList<Email> list  = CheckingMails.check("imaps", "r33nter@gmail.com","prrctqjnmkcejobz", currentFolder ,1,10);
+        ArrayList<Email> list  = CheckingMails.check("imaps", gUsername,gPassword, currentFolder ,1,10);
         displayEmails(list, emailPanel);
-        int emailLength = CheckingMails.getEmailFolderLength(currentFolder, "r33nter@gmail.com", "prrctqjnmkcejobz");
+        int emailLength = CheckingMails.getEmailFolderLength(currentFolder, gUsername, gPassword);
         emailLabel.setText("Page "+pageNumber+" of "+(emailLength/10+1));
 
 
@@ -487,7 +493,11 @@ class UserInterface{
         JButton submitArgs = new JButton("Submit arguments");
         JButton sendEmail = new JButton("Send Email");
         JButton fixGrammar = new JButton("Fix grammar");
+        JButton translateButton = new JButton ("Translate");
+        JTextField languageField = new JTextField();
         contentField.setLineWrap(true);
+        languageField.setBounds(900,170,120,30);
+        translateButton.setBounds(900,200,150,30);
         subjectLabel.setBounds(20,0,150,30);
         senderLabel.setBounds(20,40,150,30);
         openAILabel.setBounds(20,80,150,30);
@@ -509,6 +519,7 @@ class UserInterface{
         sendEmail.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println(gUsername+" "+gPassword);
                 CheckingMails.sendMail(sentToField.getText(), subjectField.getText(), contentField.getText(), gUsername, gPassword);
             }
         });
@@ -518,7 +529,14 @@ class UserInterface{
                 contentField.setText(OpenAI.executeOpenAIRequest("Fix the spelling and grammar in the following text: "+contentField.getText()));
             }
         });
-
+        translateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                contentField.setText(OpenAI.executeOpenAIRequest("Translate this text into "+languageField.getText()+" :  "+contentField.getText()));
+            }
+        });
+        composeEmailPanel.add(translateButton);
+        composeEmailPanel.add(languageField);
         composeEmailPanel.add(fixGrammar);
         composeEmailPanel.add(submitArgs);
         composeEmailPanel.add(subjectLabel);

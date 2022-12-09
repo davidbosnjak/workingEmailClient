@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Login {
     static final int LOGIN_WIDTH = 550;
@@ -25,12 +26,16 @@ public class Login {
         //event listeners. Note that this time I didn't use a million global variables and didn't have all my event listeners in massive if statement blocks
 
         loginButton.addActionListener(new ActionListener() {
+            //unzcywojvgngobpr
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 //same thing
                 System.out.println("logging in");
                 loginFrame.dispose();
-                UserInterface.mainProgram("r33nter@gmail.com", "prrctqjnmkcejobz");
+                String passwordValue = new String(passWordField.getPassword());
+
+                System.out.println("'"+usernameField.getText()+"'"+" password: "+"'"+passwordValue+"'");
+                UserInterface.mainProgram(usernameField.getText(),passwordValue);
 
             }
         });
