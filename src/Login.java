@@ -22,6 +22,8 @@ public class Login {
         wrongInputLabel.setVisible(false);
         wrongInputLabel.setBounds(300,200,200,30);
         loginPanel.add(wrongInputLabel);
+        JButton testButton = new JButton("quick");
+        testButton.setBounds(200,220,200,30);
 
         //event listeners. Note that this time I didn't use a million global variables and didn't have all my event listeners in massive if statement blocks
 
@@ -35,8 +37,15 @@ public class Login {
                 String passwordValue = new String(passWordField.getPassword());
 
                 System.out.println("'"+usernameField.getText()+"'"+" password: "+"'"+passwordValue+"'");
-                UserInterface.mainProgram(usernameField.getText(),passwordValue);
+                UserInterface.mainProgram(usernameField.getText(),passwordValue, loginFrame,loginPanel);
 
+            }
+        });
+        testButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                loginFrame.dispose();
+                UserInterface.mainProgram("testcsprojectemail@gmail.com","unzcywojvgngobpr", loginFrame, loginPanel);
             }
         });
 
@@ -60,6 +69,7 @@ public class Login {
         passWordField.setBounds(80, 140, 350, 40);
         passWordField.setFont(new Font("Serif", Font.PLAIN, 25));
         loginPanel.add(passWordField);
+        loginPanel.add(testButton);
 
         //using my very own resizeImage method to get a resized version of an image
 

@@ -1,5 +1,7 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 
 import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
 import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
+import eu.hansolo.custom.SteelCheckBox;
 
 public class Main {
     public static void main(String[] args) {
@@ -43,7 +46,7 @@ class UserInterface{
 
 
 
-    public static void mainProgram(String username, String password){
+    public static void mainProgram(String username, String password, JFrame loginFrame, JPanel loginPanel){
 
         JFrame mainProgramFrame = new JFrame();
         mainProgramFrame.setTitle("Accessimail Pro");
@@ -57,7 +60,6 @@ class UserInterface{
         mainProgramPanel.setBounds(0,0,PROGRAM_WIDTH,PROGRAM_HEIGHT);
         mainProgramPanel.setBounds(0,0,PROGRAM_WIDTH,PROGRAM_HEIGHT);
         String host = "imaps";// change accordingly
-        String mailStoreType = "pop3";
 
         gPassword = password;
         gUsername = username;
@@ -77,7 +79,12 @@ class UserInterface{
         pageLabel  = new JLabel(pageLabelString);
         displayEmails(list, emailPanel);
         mainProgramPanel.add(displaySideBar(sideBarPanel, emailPanel, mainProgramPanel,pageLabel));
-
+        JLabel addressLabel = new JLabel(gUsername);
+        JLabel userImage = new JLabel(resizeImage("assets/user.png",30,30));
+        JButton logoutButton = new JButton("Log out");
+        logoutButton.setBounds(1100,50,100,30);
+        userImage.setBounds(850,50,30,30);
+        addressLabel.setBounds(900,50,300,30);
         JButton backButton = new JButton("Back");
         backButton.setBounds(250,100,200,40);
         backButton.setOpaque(true);
@@ -85,53 +92,14 @@ class UserInterface{
         backButton.setBorderPainted(false);
         backButton.setBackground(Color.decode("#95a5a6"));
         mainProgramPanel.add(backButton);
-        CursorPanel cursorPanel = new CursorPanel(15);
-        cursorPanel.setBackground(Color.BLACK);
-        mainProgramPanel.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
 
-            }
 
-            @Override
-            public void keyPressed(KeyEvent e) {
-                System.out.println("pressed");
-                int keyCode = e.getKeyCode();
-                switch(keyCode){
-                    case KeyEvent.VK_UP:
-                        cursorPanel.movePanel(0,-10);
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        cursorPanel.movePanel(0,10);
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        cursorPanel.movePanel(-10,0);
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        cursorPanel.movePanel(10,0);
-                        break;
-                    case 'w':
-                        cursorPanel.movePanel(0,-10);
-                        break;
-                    case 's':
-                        cursorPanel.movePanel(0,10);
-                        break;
-                    case 'a':
-                        cursorPanel.movePanel(-10,0);
-                        break;
-                    case 'd':
-                       cursorPanel.movePanel(10,0);
-                        break;
-
-                }}
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-            }
-        });
         //mainProgramPanel.add(cursorPanel);
         pageLabel.setBounds(920,110,200,30);
+
+        mainProgramPanel.add(logoutButton);
+        mainProgramPanel.add(userImage);
+        mainProgramPanel.add(addressLabel);
         mainProgramPanel.add(pageLabel);
         mainProgramPanel.add(prePageButton);
         mainProgramPanel.add(nextPageButton);
@@ -189,11 +157,19 @@ class UserInterface{
                 mainProgramPanel.repaint();
             }
         });
+        logoutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                mainProgramFrame.dispose();
+                try {
+                    Login.login(loginFrame,loginPanel);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
         mainProgramFrame.setVisible(true);
-
-
-
 
 
     }
@@ -209,7 +185,6 @@ class UserInterface{
             i++;
 
         }
-
 
 
     }
@@ -389,6 +364,8 @@ class UserInterface{
         mainPanel.repaint();
     }
     public static void displayFullEmail(Email email, JPanel emailPanel){
+        Font regFont = new Font("serif", Font.PLAIN, 15);
+
         pageLabel.setVisible(false);
         prePageButton.setVisible(false);
         nextPageButton.setVisible(false);
@@ -397,30 +374,64 @@ class UserInterface{
         oneEmailDisplay.setBounds(0,0,1280,800);
         JLabel senderLabel = new JLabel(email.sender);
         JLabel subjectLabel = new JLabel(email.subject);
-        String emailContent = parseString(email.body);
-        JLabel contentLabel = new JLabel(parseString(email.body));
+        JTextArea contentLabel = new JTextArea(email.body);
+        contentLabel.setWrapStyleWord(true);
+        contentLabel.setLineWrap(true);
+        contentLabel.setEditable(false);
         contentLabel.setForeground(Color.BLACK);
         contentLabel.setFont(new Font("serif", Font.PLAIN, 16));
+        JScrollPane scrollField = new JScrollPane(contentLabel);
+        contentLabel.setFont(regFont);
+
+
+
         senderLabel.setBounds(20,0,300,30);
         senderLabel.setFont(new Font("serif", Font.BOLD, 18));
 
         subjectLabel.setBounds(20,50,800,30);
         subjectLabel.setFont(new Font("serif", Font.BOLD, 16));
-        contentLabel.setBounds(20,80,800,400);
+        scrollField.setBounds(20,80,800,400);
         JButton ttsButton  = new JButton("Speak email");
         JButton replyButton = new JButton("Reply");
         JButton smartReplyButton = new JButton("Smart reply");
+        JToggleButton dyslexiaButton = new JToggleButton("Dyslexia font");
 
+        dyslexiaButton.setBounds(850,200,120,30);
         smartReplyButton.setBounds(850,300,200,40);
         replyButton.setBounds(850,400,200,40);
-        ttsButton.setBounds(400,400,200,60);
+        ttsButton.setBounds(400,480,200,40);
+
+
+        dyslexiaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                ButtonModel model = dyslexiaButton.getModel();
+                System.out.println(model.isArmed());
+                System.out.println(model.isSelected());
+
+                if(model.isSelected()){
+                    try {
+                        Font font = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/opendyslexic.otf"));
+                        font = font.deriveFont(Font.PLAIN, 15);
+                        contentLabel.setFont(font);
+                    } catch (FontFormatException e) {
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                else{
+                    contentLabel.setFont(new Font("serif", Font.PLAIN, 15));
+                }
+            }
+        });
         ttsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        TextToSpeech.speakPhrase(emailContent);
+                        TextToSpeech.speakPhrase(email.body);
 
                     }
                 }).start();
@@ -438,43 +449,21 @@ class UserInterface{
                 composeNewEmail(emailPanel, email.sender, "");
             }
         });
+        oneEmailDisplay.add(dyslexiaButton);
         oneEmailDisplay.add(smartReplyButton);
         oneEmailDisplay.add(replyButton);
         oneEmailDisplay.add(ttsButton);
         oneEmailDisplay.add(senderLabel);
         oneEmailDisplay.add(subjectLabel);
-        oneEmailDisplay.add(contentLabel);
+        oneEmailDisplay.add(scrollField);
         emailPanel.add(oneEmailDisplay);
         emailPanel.repaint();
 
 
     }
-    public static String parseString(String content){
-        int maxChars = 120;
-        boolean include = true;
-        char[] charArray = content.toCharArray();
-        StringBuilder stringToBuild = new StringBuilder();
-        stringToBuild.append("<html>");
 
-        int count = 0;
-        for(char c : charArray){
-            if(c == '<') include = false;
-            else if (c == '>') include = true;
-            else if(include){
-                stringToBuild.append(c);
-                count++;
-            }
-            else if (count>=maxChars && c == ' ' && include){
-                stringToBuild.append("<br/>");
-                count = 0;
-            }
-
-        }
-        stringToBuild.append("</html>");
-        System.out.println(stringToBuild);
-        return stringToBuild.toString();
-    }
     public static void composeNewEmail(JPanel emailPanel, String user, String content){
+        Font regFont = new Font("serif", Font.PLAIN, 15);
         prePageButton.setVisible(false);
         nextPageButton.setVisible(false);
         pageLabel.setVisible(false);
@@ -485,8 +474,10 @@ class UserInterface{
         JTextField subjectField = new JTextField();
         JTextField openAIField = new JTextField();
         JTextArea contentField = new JTextArea();
+        JScrollPane scrollableField = new JScrollPane(contentField);
         sentToField.setText(user);
         contentField.setText(content);
+        contentField.setEditable(true);
         JLabel subjectLabel = new JLabel("Subject");
         JLabel senderLabel = new JLabel("Recipient");
         JLabel openAILabel = new JLabel("OpenAI arguments");
@@ -494,8 +485,19 @@ class UserInterface{
         JButton sendEmail = new JButton("Send Email");
         JButton fixGrammar = new JButton("Fix grammar");
         JButton translateButton = new JButton ("Translate");
+        JButton fontPus = new JButton("Font plus");
+        JButton fontMinus = new JButton("Font minus");
+        JButton ttsButton = new JButton("Speak email");
+        ttsButton.setBounds(400,500,200,30);
+        JToggleButton dyslexiaButton = new JToggleButton("Dyslexia Font");
+        sentToField.setFont(regFont);
+        subjectField.setFont(regFont);
+        openAIField.setFont(regFont);
         JTextField languageField = new JTextField();
         contentField.setLineWrap(true);
+        contentField.setWrapStyleWord(true);
+        contentField.setFont(new Font("serif", Font.PLAIN, 15));
+        dyslexiaButton.setBounds(900,400,120,30);
         languageField.setBounds(900,170,120,30);
         translateButton.setBounds(900,200,150,30);
         subjectLabel.setBounds(20,0,150,30);
@@ -505,11 +507,17 @@ class UserInterface{
         sentToField.setBounds(200,40,700,40);
         subjectField.setBounds(200,0,700,40);
         openAIField.setBounds(200,80,700,40);
-        contentField.setBounds(200,150,700,500);
+        scrollableField.setBounds(200,150,700,350);
         sendEmail.setBounds(900,500,150,30);
         fixGrammar.setBounds(900,300,150,30);
 
         //action listeners
+        ttsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                TextToSpeech.speakPhrase(contentField.getText());
+            }
+        });
         submitArgs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -535,6 +543,33 @@ class UserInterface{
                 contentField.setText(OpenAI.executeOpenAIRequest("Translate this text into "+languageField.getText()+" :  "+contentField.getText()));
             }
         });
+        dyslexiaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                ButtonModel model = dyslexiaButton.getModel();
+                System.out.println(model.isArmed());
+                System.out.println(model.isSelected());
+
+                if(model.isSelected()){
+                    try {
+                        Font font = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/opendyslexic.otf"));
+                        font = font.deriveFont(Font.PLAIN, 15);
+                        contentField.setFont(font);
+                    } catch (FontFormatException e) {
+                        throw new RuntimeException(e);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                else{
+                    contentField.setFont(new Font("serif", Font.PLAIN, 15));
+                }
+
+
+               }
+        });
+        composeEmailPanel.add(ttsButton);
+        composeEmailPanel.add(dyslexiaButton);
         composeEmailPanel.add(translateButton);
         composeEmailPanel.add(languageField);
         composeEmailPanel.add(fixGrammar);
@@ -546,7 +581,7 @@ class UserInterface{
         composeEmailPanel.add(sentToField);
         composeEmailPanel.add(subjectField);
         composeEmailPanel.add(openAIField);
-        composeEmailPanel.add(contentField);
+        composeEmailPanel.add(scrollableField);
         emailPanel.add(composeEmailPanel);
         emailPanel.repaint();
 
@@ -555,7 +590,6 @@ class UserInterface{
 
     }
 }
-
 
 class Email{
     String sender;
@@ -575,76 +609,8 @@ class Email{
         this.body = body;
     }
 
-
-
-
 }
-class CursorPanel extends CoolComponents.RoundedPanel {
-    int currX;
-    int currY;
-    //to make clicking stuff work with this, just set the cursor position
-    CursorPanel(int roundAmount){
-        super(roundAmount);
-        setBounds(100,100,50,50);
-        currX = 100;
-        currY = 100;
-        setLayout(null);
 
-        //requestFocus();
-
-
-    }
-    public void movePanel(int xMove, int yMove){
-        currX+=xMove;
-        currY+=yMove;
-        System.out.println("should be moving");
-        setBounds(currX,currY,50,50);
-        repaint();
-
-    }
-
-
-    public void keyTyped(KeyEvent keyEvent) {
-
-    }
-
-
-   public void nativeKeyPressed(NativeKeyEvent keyEvent){
-        System.out.println("pressed");
-        int keyCode = keyEvent.getKeyCode();
-        switch(keyCode){
-            case KeyEvent.VK_UP:
-                movePanel(0,-10);
-                break;
-            case KeyEvent.VK_DOWN:
-                movePanel(0,10);
-                break;
-            case KeyEvent.VK_LEFT:
-                movePanel(-10,0);
-                break;
-            case KeyEvent.VK_RIGHT:
-                movePanel(10,0);
-                break;
-            case 'w':
-                movePanel(0,-10);
-                break;
-            case 's':
-                movePanel(0,10);
-                break;
-            case 'a':
-                movePanel(-10,0);
-                break;
-            case 'd':
-                movePanel(10,0);
-                break;
-
-        }
-    }
-
-
-
-
-}
 class CacheInformation{
 
     public ArrayList<Email> list= new ArrayList<>();
