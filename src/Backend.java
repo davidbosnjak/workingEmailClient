@@ -1,4 +1,5 @@
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Properties;
 import javax.mail.*;
@@ -135,7 +136,12 @@ class CheckingMails {
                 Message message = messages[i];
                 InternetAddress addy = (InternetAddress) message.getFrom()[0];
                 String content = getTextFromMessage(message);
-                Email email  = new Email(addy.getAddress(), message.getSubject(), content);
+                System.out.println(message.getReceivedDate());
+                SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+                String formattedDate = dateFormat.format(message.getReceivedDate());
+                Email email  = new Email(addy.getAddress(), message.getSubject(), content, formattedDate);
+
+                System.out.println(formattedDate);
                 returnList.add(email);
 
 

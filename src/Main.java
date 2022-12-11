@@ -203,6 +203,8 @@ class UserInterface{
         JLabel subjectLabel = new JLabel(email.subject);
         subjectLabel.setFont(new Font("serif", Font.BOLD, 14));
         JButton deleteButton = new JButton(resizeImage("assets/delete.png",30,30));
+        JLabel dateLabel = new JLabel(email.date);
+        dateLabel.setBounds(950,10,120,30);
         //deleteButton.setBounds(1000,10,30,30);
         deleteButton.setContentAreaFilled(false);
         oneEmailPanel.add(deleteButton);
@@ -246,6 +248,7 @@ class UserInterface{
         oneEmailPanel.add(contentLabel);
         oneEmailPanel.add(subjectLabel);
         oneEmailPanel.add(senderLabel);
+        oneEmailPanel.add(dateLabel);
 
 
         return oneEmailPanel;
@@ -402,7 +405,7 @@ class UserInterface{
         JButton fontPlus = new JButton("Font plus");
         JButton fontMinus = new JButton("Font minus");
         fontPlus.setBounds(20,500,120,30);
-        fontMinus.setBounds(100,500,120,30);
+        fontMinus.setBounds(10,500,120,30);
 
 
         dyslexiaButton.setBounds(850,200,120,30);
@@ -641,6 +644,8 @@ class UserInterface{
         emailPanel.add(composeEmailPanel);
         emailPanel.repaint();
         composeEmailPanel.repaint();
+        scrollableField.repaint();
+        contentField.repaint();
 
 
 
@@ -652,6 +657,7 @@ class Email{
     String sender;
     String subject;
     String body;
+    String date;
 
     Email(String sender, String subject){
         this.sender = sender;
@@ -660,10 +666,11 @@ class Email{
 
 
     }
-    Email(String sender, String subject, String body){
+    Email(String sender, String subject, String body, String date){
         this.sender = sender;
         this.subject = subject;
         this.body = body;
+        this.date = date;
     }
 
 }
