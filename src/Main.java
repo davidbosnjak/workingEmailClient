@@ -41,6 +41,7 @@ class UserInterface{
     static JLabel pageLabel  = new JLabel();
     public static String gUsername;
     public static String gPassword;
+    static int fontSize = 15;
 
     static CacheInformation cache;
 
@@ -313,6 +314,7 @@ class UserInterface{
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 composeNewEmail(emailPanel, "", "");
+                mainPanel.repaint();
             }
         });
         sentButton.addActionListener(new ActionListener() {
@@ -396,12 +398,31 @@ class UserInterface{
         JButton smartReplyButton = new JButton("Smart reply");
         JToggleButton dyslexiaButton = new JToggleButton("Dyslexia font");
 
+        JButton fontPlus = new JButton("Font plus");
+        JButton fontMinus = new JButton("Font minus");
+        fontPlus.setBounds(20,500,120,30);
+        fontMinus.setBounds(100,500,120,30);
+
+
         dyslexiaButton.setBounds(850,200,120,30);
         smartReplyButton.setBounds(850,300,200,40);
         replyButton.setBounds(850,400,200,40);
         ttsButton.setBounds(400,480,200,40);
 
-
+        fontPlus.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                fontSize++;
+                contentLabel.setFont(new Font("serif", Font.PLAIN, fontSize));
+            }
+        });
+        fontMinus.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                fontSize--;
+                contentLabel.setFont(new Font("serif", Font.PLAIN, fontSize));
+            }
+        });
         dyslexiaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -449,6 +470,8 @@ class UserInterface{
                 composeNewEmail(emailPanel, email.sender, "");
             }
         });
+        oneEmailDisplay.add(fontPlus);
+        oneEmailDisplay.add(fontMinus);
         oneEmailDisplay.add(dyslexiaButton);
         oneEmailDisplay.add(smartReplyButton);
         oneEmailDisplay.add(replyButton);
@@ -485,9 +508,15 @@ class UserInterface{
         JButton sendEmail = new JButton("Send Email");
         JButton fixGrammar = new JButton("Fix grammar");
         JButton translateButton = new JButton ("Translate");
-        JButton fontPus = new JButton("Font plus");
+        JButton fontPlus = new JButton("Font plus");
         JButton fontMinus = new JButton("Font minus");
+        fontPlus.setBounds(50,200,120,30);
+        fontMinus.setBounds(50,250,120,30);
+
+
+
         JButton ttsButton = new JButton("Speak email");
+
         ttsButton.setBounds(400,500,200,30);
         JToggleButton dyslexiaButton = new JToggleButton("Dyslexia Font");
         sentToField.setFont(regFont);
@@ -512,6 +541,21 @@ class UserInterface{
         fixGrammar.setBounds(900,300,150,30);
 
         //action listeners
+
+        fontPlus.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                fontSize++;
+                contentField.setFont(new Font("serif", Font.PLAIN, fontSize));
+            }
+        });
+        fontMinus.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                fontSize--;
+                contentField.setFont(new Font("serif", Font.PLAIN, fontSize));
+            }
+        });
         ttsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -553,7 +597,7 @@ class UserInterface{
                 if(model.isSelected()){
                     try {
                         Font font = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/opendyslexic.otf"));
-                        font = font.deriveFont(Font.PLAIN, 15);
+                        font = font.deriveFont(Font.PLAIN, fontSize);
                         contentField.setFont(font);
                     } catch (FontFormatException e) {
                         throw new RuntimeException(e);
@@ -562,12 +606,14 @@ class UserInterface{
                     }
                 }
                 else{
-                    contentField.setFont(new Font("serif", Font.PLAIN, 15));
+                    contentField.setFont(new Font("serif", Font.PLAIN, fontSize));
                 }
 
 
                }
         });
+        composeEmailPanel.add(fontMinus);
+        composeEmailPanel.add(fontPlus);
         composeEmailPanel.add(ttsButton);
         composeEmailPanel.add(dyslexiaButton);
         composeEmailPanel.add(translateButton);
@@ -584,6 +630,7 @@ class UserInterface{
         composeEmailPanel.add(scrollableField);
         emailPanel.add(composeEmailPanel);
         emailPanel.repaint();
+        composeEmailPanel.repaint();
 
 
 

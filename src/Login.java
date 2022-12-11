@@ -8,6 +8,7 @@ import java.util.Arrays;
 public class Login {
     static final int LOGIN_WIDTH = 550;
     static final int LOGIN_HEIGHT = 300;
+
     public static void login(JFrame loginFrame, JPanel loginPanel) throws IOException {
         //rounded text field with 30 rounding
         CoolComponents.RoundJTextField usernameField = new CoolComponents.RoundJTextField(30);
