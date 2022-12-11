@@ -42,6 +42,7 @@ class UserInterface{
     public static String gUsername;
     public static String gPassword;
     static int fontSize = 15;
+    static Font currentFont = new Font("serif", Font.PLAIN,fontSize);
 
     static CacheInformation cache;
 
@@ -381,7 +382,7 @@ class UserInterface{
         contentLabel.setLineWrap(true);
         contentLabel.setEditable(false);
         contentLabel.setForeground(Color.BLACK);
-        contentLabel.setFont(new Font("serif", Font.PLAIN, 16));
+        contentLabel.setFont(currentFont);
         JScrollPane scrollField = new JScrollPane(contentLabel);
         contentLabel.setFont(regFont);
 
@@ -413,14 +414,15 @@ class UserInterface{
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 fontSize++;
-                contentLabel.setFont(new Font("serif", Font.PLAIN, fontSize));
+                contentLabel.setFont(currentFont.deriveFont(Font.PLAIN,fontSize));
+
             }
         });
         fontMinus.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 fontSize--;
-                contentLabel.setFont(new Font("serif", Font.PLAIN, fontSize));
+                contentLabel.setFont(currentFont.deriveFont(Font.PLAIN,fontSize));
             }
         });
         dyslexiaButton.addActionListener(new ActionListener() {
@@ -433,7 +435,9 @@ class UserInterface{
                 if(model.isSelected()){
                     try {
                         Font font = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/opendyslexic.otf"));
-                        font = font.deriveFont(Font.PLAIN, 15);
+
+                        font = font.deriveFont(Font.PLAIN, fontSize);
+                        currentFont = font;
                         contentLabel.setFont(font);
                     } catch (FontFormatException e) {
                         throw new RuntimeException(e);
@@ -442,7 +446,9 @@ class UserInterface{
                     }
                 }
                 else{
-                    contentLabel.setFont(new Font("serif", Font.PLAIN, 15));
+                    Font font = new Font("serif", Font.PLAIN,fontSize);
+                    currentFont = font;
+                    contentLabel.setFont(currentFont);
                 }
             }
         });
@@ -525,7 +531,7 @@ class UserInterface{
         JTextField languageField = new JTextField();
         contentField.setLineWrap(true);
         contentField.setWrapStyleWord(true);
-        contentField.setFont(new Font("serif", Font.PLAIN, 15));
+        contentField.setFont(currentFont);
         dyslexiaButton.setBounds(900,400,120,30);
         languageField.setBounds(900,170,120,30);
         translateButton.setBounds(900,200,150,30);
@@ -546,14 +552,15 @@ class UserInterface{
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 fontSize++;
-                contentField.setFont(new Font("serif", Font.PLAIN, fontSize));
+
+                contentField.setFont(currentFont.deriveFont(Font.PLAIN,fontSize));
             }
         });
         fontMinus.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 fontSize--;
-                contentField.setFont(new Font("serif", Font.PLAIN, fontSize));
+                contentField.setFont(currentFont.deriveFont(Font.PLAIN,fontSize));
             }
         });
         ttsButton.addActionListener(new ActionListener() {
@@ -598,7 +605,8 @@ class UserInterface{
                     try {
                         Font font = Font.createFont(Font.TRUETYPE_FONT, new File("fonts/opendyslexic.otf"));
                         font = font.deriveFont(Font.PLAIN, fontSize);
-                        contentField.setFont(font);
+                        currentFont = font;
+                        contentField.setFont(currentFont);
                     } catch (FontFormatException e) {
                         throw new RuntimeException(e);
                     } catch (IOException e) {
@@ -606,7 +614,9 @@ class UserInterface{
                     }
                 }
                 else{
-                    contentField.setFont(new Font("serif", Font.PLAIN, fontSize));
+                    Font font = new Font("serif", Font.PLAIN,fontSize);
+                    currentFont = font;
+                    contentField.setFont(currentFont);
                 }
 
 
