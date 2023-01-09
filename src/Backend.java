@@ -43,43 +43,8 @@ class CheckingMails {
         }
         return result;
     }
-    public static String makeMessage(Message message) throws MessagingException, IOException {
-
-        String sender = String.valueOf(message.getFrom()[0]);
-        String subject = message.getSubject();
-        String content = getTextFromMessage(message);
-        return sender +"\n"+subject+"\n"+content;
 
 
-
-
-    }
-
-    /*
-     * This method would print FROM,TO and SUBJECT of the message
-     */
-    public static void writeEnvelope(Message m) throws Exception {
-        System.out.println("This is the message envelope");
-        System.out.println("---------------------------");
-        Address[] a;
-
-        // FROM
-        if ((a = m.getFrom()) != null) {
-            for (int j = 0; j < a.length; j++)
-                System.out.println("FROM: " + a[j].toString());
-        }
-
-        // TO
-        if ((a = m.getRecipients(Message.RecipientType.TO)) != null) {
-            for (int j = 0; j < a.length; j++)
-                System.out.println("TO: " + a[j].toString());
-        }
-
-        // SUBJECT
-        if (m.getSubject() != null)
-            System.out.println("SUBJECT: " + m.getSubject());
-
-    }
 
     public static int getEmailFolderLength(String folder, String user, String password){
         //create properties field

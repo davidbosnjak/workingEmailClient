@@ -24,7 +24,6 @@ public class Login {
         wrongInputLabel.setBounds(300,200,200,30);
         loginPanel.add(wrongInputLabel);
         JButton testButton = new JButton("quick");
-        testButton.setBounds(200,220,200,30);
 
         //event listeners. Note that this time I didn't use a million global variables and didn't have all my event listeners in massive if statement blocks
 
@@ -40,13 +39,6 @@ public class Login {
                 System.out.println("'"+usernameField.getText()+"'"+" password: "+"'"+passwordValue+"'");
                 UserInterface.mainProgram(usernameField.getText(),passwordValue, loginFrame,loginPanel);
 
-            }
-        });
-        testButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                loginFrame.dispose();
-                UserInterface.mainProgram("testcsprojectemail@gmail.com","unzcywojvgngobpr", loginFrame, loginPanel);
             }
         });
 
