@@ -10,7 +10,6 @@ public class OpenAI {
     public static void main(String[] args){
         executeOpenAIRequest("test");
     }
-    // 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
     public static String executeOpenAIRequest(String request) {
         StringBuilder totalOutput = new StringBuilder();
 
